@@ -1,3 +1,6 @@
 <resources>
-    <string name="app_name">AndroidPopularLibraries</string>
+    <string name="app_name">Popular Libraries</string>
+    <string name="counter_one">Counter One</string>
+    <string name="counter_two">Counter Two</string>
+    <string name="counter_three">Counter Three</string>
 </resources>
