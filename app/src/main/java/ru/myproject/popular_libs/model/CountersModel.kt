@@ -2,9 +2,9 @@ package ru.myproject.popular_libs.model
 
 class CountersModel {
 
-    val counters = mutableListOf(0, 0, 0)
+    private val counters = mutableListOf(0, 0, 0)
 
-    fun getCurrent(index: Int): Int {
+    private fun getCurrent(index: Int): Int {
         return counters[index]
     }
 

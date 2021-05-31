@@ -1,7 +1,7 @@
 package ru.myproject.popular_libs.view
 
 interface MainView {
-    fun setButtonText1(text: String)
-    fun setButtonText2(text: String)
-    fun setButtonText3(text: String)
+    fun showCounter1(counter: String)
+    fun showCounter2(counter: String)
+    fun showCounter3(counter: String)
 }
