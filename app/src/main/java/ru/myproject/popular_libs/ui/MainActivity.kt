@@ -1,36 +1,42 @@
 package ru.myproject.popular_libs.ui
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import com.github.terrakok.cicerone.androidx.AppNavigator
+import moxy.MvpAppCompatActivity
+import moxy.ktx.moxyPresenter
+import ru.myproject.popular_libs.R
 import ru.myproject.popular_libs.databinding.ActivityMainBinding
-import ru.myproject.popular_libs.model.CountersModel
-import ru.myproject.popular_libs.presenter.MainPresenter
-import ru.myproject.popular_libs.view.MainView
+import ru.myproject.popular_libs.mvp.presenter.MainPresenter
+import ru.myproject.popular_libs.mvp.view.MainView
+import ru.myproject.popular_libs.navigation.AndroidScreens
 
-class MainActivity : AppCompatActivity(), MainView {
+class MainActivity : MvpAppCompatActivity(), MainView {
 
+    private val navigator = AppNavigator(this, R.id.container)
+    private val presenter by moxyPresenter { MainPresenter(App.instance.router, AndroidScreens()) }
     private var vb: ActivityMainBinding? = null
-    private val presenter = MainPresenter(this, model = CountersModel())
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         vb = ActivityMainBinding.inflate(layoutInflater)
         setContentView(vb?.root)
-
-        vb?.btnCounter1?.setOnClickListener { presenter.counterClick1() }
-        vb?.btnCounter2?.setOnClickListener { presenter.counterClick2() }
-        vb?.btnCounter3?.setOnClickListener { presenter.counterClick3() }
     }
 
-    override fun showCounter1(counter: String) {
-        vb?.btnCounter1?.text = counter
+    override fun onResumeFragments() {
+        super.onResumeFragments()
+        App.instance.navigatorHolder.setNavigator(navigator)
     }
 
-    override fun showCounter2(counter: String) {
-        vb?.btnCounter2?.text = counter
+    override fun onPause() {
+        super.onPause()
+        App.instance.navigatorHolder.removeNavigator()
     }
 
-    override fun showCounter3(counter: String) {
-        vb?.btnCounter3?.text = counter
+    override fun onBackPressed() {
+        supportFragmentManager.fragments.forEach {
+            if (it is BackButtonListener && it.backPressed()) {
+                return
+            }
+        }
+        presenter.backClicked()
     }
 }
