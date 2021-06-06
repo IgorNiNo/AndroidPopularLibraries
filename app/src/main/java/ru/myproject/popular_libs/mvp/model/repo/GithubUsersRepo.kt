@@ -1,5 +1,6 @@
 package ru.myproject.popular_libs.mvp.model.repo
 
+import io.reactivex.rxjava3.core.Single
 import ru.myproject.popular_libs.mvp.model.entity.GithubUser
 
 class GithubUsersRepo {
@@ -11,7 +12,5 @@ class GithubUsersRepo {
         GithubUser("login5")
     )
 
-    fun getUsers(): List<GithubUser> {
-        return repositories
-    }
+    fun getUsers(): Single<List<GithubUser>> = Single.just(repositories)
 }
