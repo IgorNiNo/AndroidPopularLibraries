@@ -1,6 +1,8 @@
 package ru.myproject.popular_libs.mvp.presenter
 
+import android.util.Log
 import com.github.terrakok.cicerone.Router
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import moxy.MvpPresenter
 import ru.myproject.popular_libs.mvp.model.entity.GithubUser
 import ru.myproject.popular_libs.mvp.model.repo.GithubUsersRepo
@@ -26,6 +28,7 @@ class UsersPresenter(
     }
 
     val usersListPresenter = UsersListPresenter()
+    private var disposables = CompositeDisposable()
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -37,8 +40,18 @@ class UsersPresenter(
         }
     }
 
-    fun loadData() {
-        val users = usersRepo.getUsers()
+    private fun loadData() {
+        disposables.add(
+            usersRepo
+                .getUsers()
+                .subscribe(
+                    { users -> showUsers(users) },
+                    { error -> Log.e("ERROR", error.message.toString()) }
+                )
+        )
+    }
+
+    private fun showUsers(users: List<GithubUser>) {
         usersListPresenter.users.addAll(users)
         viewState.updateList()
     }
@@ -46,5 +59,10 @@ class UsersPresenter(
     fun backPressed(): Boolean {
         router.exit()
         return true
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposables.dispose()
     }
 }
